@@ -1,4 +1,5 @@
 import React from "react";
+import { Cards } from "../../models/board";
 import {
   CardAvatar,
   CardContainer,
@@ -9,18 +10,17 @@ import {
 } from "./styles";
 
 interface CardProps {
-  title: string;
-  description: string;
+  card: Cards;
 }
 
-const Card = ({ title, description }: CardProps) => {
+const Card: React.FC<CardProps> = ({ card }) => {
   return (
     <CardContainer>
-      <CardTitle>{title}</CardTitle>
-      <CardDescription>{description}</CardDescription>
+      <CardTitle>{card.name}</CardTitle>
+      <CardDescription>{card.description}</CardDescription>
       <CardFooter>
-        <CardAvatar src="https://cdn.dribbble.com/userupload/3123396/file/original-9662aaed482b555fa6ff30897654fe6f.png?compress=1&resize=400x300&vertical=top" />
-        <CardDate>2023/12/12</CardDate>
+        <CardAvatar />
+        <CardDate>{card.createdAt}</CardDate>
       </CardFooter>
     </CardContainer>
   );

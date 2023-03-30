@@ -1,0 +1,21 @@
+{
+  "board": {
+    "title": "title",
+    "description": "Description",
+    "created": "Date",
+    "status": "Status",
+    "task": "Task",
+    "addTask": "Create task",
+    "action": {
+      "save": "Save",
+      "delete": "Delete",
+      "close": "Close",
+      "add": "Add"
+    },
+    "placeholder": {
+      "pleaseInputText": "Add a title",
+      "pleaseInputDesc": "Add a description",
+      "clickToAddText": "Click to add text"
+    }
+  }
+}

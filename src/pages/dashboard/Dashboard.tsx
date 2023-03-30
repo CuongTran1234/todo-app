@@ -1,90 +1,51 @@
-import React from "react";
-import Card from "../../components/card/Card";
-import Column from "../../components/column/Column";
+import React, { useEffect, useState } from "react";
+import CardDetail from "../../components/card-detail/CardDetail";
 import AppHeader from "../../components/header/Header";
-import Modal from "../../components/modal/Modal";
 import { AppContainer, AppMain } from "./styles";
+import DataBoard from "../../defaultData";
+import Board from "../../components/board/Board";
+import { Boards, Cards } from "../../models/board";
+import Helper from "../../utils";
 
 const Dashboard = () => {
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [boards, setBoards] = useState<Boards[]>([]);
+  const [boardDefault, setBoardDefault] = useState<number>(0);
+
+  const addCardHandler = (boardId: number, card: Cards) => {
+    const boardIndex = boards.findIndex((item) => item.id === boardId);
+    if (boardIndex < 0) return;
+
+    const boardList = [...boards];
+    boardList[boardIndex].cards.push({
+      id: Helper.uuid(),
+      name: card.name,
+      createdAt: card.createdAt,
+      description: card.description,
+    });
+
+    setBoards(boardList);
+  };
+
+  useEffect(() => {
+    setBoards(DataBoard);
+    setBoardDefault(DataBoard[0].id);
+  }, []);
+
   return (
     <AppContainer>
-      <Modal>
-        <h3>TItle</h3>
-      </Modal>
-      <AppHeader></AppHeader>
+      {showModal && (
+        <CardDetail
+          boardId={boardDefault}
+          onClose={() => setShowModal(false)}
+          addCard={addCardHandler}
+        />
+      )}
+      <AppHeader onClick={() => setShowModal(true)}></AppHeader>
       <AppMain>
-        <Column title="To Do">
-          <Card
-            title="Design mockup"
-            description="Copywriting content for the app to be created"
-          ></Card>
-          <Card
-            title="Design mockup"
-            description="Copywriting content for the app to be created"
-          ></Card>
-          <Card
-            title="Design mockup"
-            description="Copywriting content for the app to be created"
-          ></Card>
-          <Card
-            title="Design mockup"
-            description="Copywriting content for the app to be created"
-          ></Card>
-        </Column>
-        <Column title="In Progress">
-          <Card
-            title="Design mockup"
-            description="Copywriting content for the app to be created"
-          ></Card>
-          <Card
-            title="Design mockup"
-            description="Copywriting content for the app to be created"
-          ></Card>
-          <Card
-            title="Design mockup"
-            description="Copywriting content for the app to be created"
-          ></Card>
-          <Card
-            title="Design mockup"
-            description="Copywriting content for the app to be created"
-          ></Card>
-        </Column>
-        <Column title="Done">
-          <Card
-            title="Design mockup"
-            description="Copywriting content for the app to be created"
-          ></Card>
-          <Card
-            title="Design mockup"
-            description="Copywriting content for the app to be created"
-          ></Card>
-          <Card
-            title="Design mockup"
-            description="Copywriting content for the app to be created"
-          ></Card>
-          <Card
-            title="Design mockup"
-            description="Copywriting content for the app to be created"
-          ></Card>
-        </Column>
-        <Column title="Archived">
-          <Card
-            title="Design mockup"
-            description="Copywriting content for the app to be created"
-          ></Card>
-          <Card
-            title="Design mockup"
-            description="Copywriting content for the app to be created"
-          ></Card>
-          <Card
-            title="Design mockup"
-            description="Copywriting content for the app to be created"
-          ></Card>
-          <Card
-            title="Design mockup"
-            description="Copywriting content for the app to be created"
-          ></Card>
-        </Column>
+        {boards.map((item) => (
+          <Board key={item.id} board={item} />
+        ))}
       </AppMain>
     </AppContainer>
   );

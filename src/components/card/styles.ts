@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Constants from "../../constants";
+import { User } from "react-feather";
 
 export const CardContainer = styled.div`
   background-color: ${Constants.COLOR.WHITE};
@@ -31,11 +32,12 @@ export const CardFooter = styled.div`
   border-top: 1px solid ${Constants.COLOR.DARK_GREY};
 `;
 
-export const CardAvatar = styled.img`
-  width: 30px;
-  height: 30px;
-  border-radius: 100%;
-  object-fit: cover;
+export const CardAvatar = styled(User)`
+  width: 24px;
+  height: 24px;
+  color: ${Constants.COLOR.WARNING};
+  border: 2px solid currentColor;
+  border-radius: 24px;
 `;
 
 export const CardDate = styled.span`

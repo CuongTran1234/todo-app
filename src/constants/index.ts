@@ -11,6 +11,7 @@ export interface ConstantProps {
     GREEN: string;
     GREY: string;
     DARK_GREY: string;
+    DARK_GREEN: string;
   };
 }
 
@@ -27,6 +28,7 @@ const Constants: ConstantProps = {
     GREEN: "#0B6F29",
     GREY: "#747378 ",
     DARK_GREY: "#c5cad5",
+    DARK_GREEN: "#394f5b",
   },
 };
 

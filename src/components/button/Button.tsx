@@ -2,12 +2,18 @@ import * as React from "react";
 import AppButton from "./styles";
 
 interface DataProps {
-  type: "primary" | "warning" | "default" | "success";
+  varient: "primary" | "warning" | "default" | "success";
+  type: "button" | "submit";
   children?: React.ReactNode;
+  onClick?: () => void;
 }
 
-const Button: React.FC<DataProps> = ({ type, children }) => {
-  return <AppButton varient={type}>{children}</AppButton>;
+const Button: React.FC<DataProps> = ({ type, varient, children, onClick }) => {
+  return (
+    <AppButton type={type} varient={varient} onClick={onClick}>
+      {children}
+    </AppButton>
+  );
 };
 
 export default Button;
