@@ -76,3 +76,8 @@ export const CardSelectOption = styled.option`
   width: 100%;
   background-color: ${Constants.COLOR.WHITE};
 `;
+
+export const ErrorValidation = styled.p`
+  color: ${Constants.COLOR.DARD_RED};
+  font-size: 14px;
+`;

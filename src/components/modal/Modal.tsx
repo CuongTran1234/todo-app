@@ -6,16 +6,17 @@ import { ModalContainer, ModalContent, ModalFooter } from "./styles";
 interface ModalProps {
   children?: React.ReactNode;
   onClose: () => void;
+  onSubmit: () => void;
 }
 
-const Modal: React.FC<ModalProps> = ({ onClose, children }) => {
+const Modal: React.FC<ModalProps> = ({ onClose, onSubmit, children }) => {
   const { t } = useTranslation();
   return (
     <ModalContainer>
       <ModalContent>
         {children}
         <ModalFooter>
-          <Button type="button" varient="success">
+          <Button type="button" varient="success" onClick={onSubmit}>
             {t("board.action.save")}
           </Button>
           <Button type="button" varient="warning">

@@ -16,7 +16,9 @@ import {
   CardDetaiTitleIcon,
   CardSelectForm,
   CardSelectOption,
+  ErrorValidation,
 } from "./styles";
+import { nameValidator } from "./validators";
 
 interface CardDetailProps {
   card?: Cards;
@@ -30,7 +32,12 @@ type StatusData = {
   value: number;
 };
 
-const CardDetail: React.FC<CardDetailProps> = ({ onClose, card, boardId }) => {
+const CardDetail: React.FC<CardDetailProps> = ({
+  onClose,
+  addCard,
+  card,
+  boardId,
+}) => {
   const { t } = useTranslation();
   const [status, setStatus] = useState<StatusData[]>([]);
   const [boardValue, setBoardValue] = useState<number>(boardId);
@@ -40,30 +47,32 @@ const CardDetail: React.FC<CardDetailProps> = ({ onClose, card, boardId }) => {
     createdAt: card?.createdAt || "",
     description: card?.description || "",
   });
+  const [formValidate, setFormValidate] = useState<Omit<Cards, "id">>({
+    name: "",
+    createdAt: "",
+    description: "",
+  });
 
-  const updateDate = (date: string) => {
-    if (!date) return;
+  const onUpdateField = (field: string, value: string) => {
+    const validateFunc: Record<string, Function> = {
+      name: nameValidator,
+    };
 
-    setCardItem({
-      ...cardItem,
-      createdAt: date,
-    });
+    const validateResult = validateFunc[field](value);
+
+    setFormValidate((prevValidate) => ({
+      ...prevValidate,
+      [field]: validateResult,
+    }));
+
+    setCardItem((prevCard) => ({
+      ...prevCard,
+      [field]: value,
+    }));
   };
 
-  const updateTitle = (title: string) => {
-    if (!title) return;
-
-    setCardItem({
-      ...cardItem,
-      name: title,
-    });
-  };
-
-  const updateDescription = (description: string) => {
-    setCardItem({
-      ...cardItem,
-      description,
-    });
+  const addCardHandler = () => {
+    addCard(boardValue, cardItem);
   };
 
   useEffect(() => {
@@ -71,7 +80,7 @@ const CardDetail: React.FC<CardDetailProps> = ({ onClose, card, boardId }) => {
   }, []);
 
   return (
-    <Modal onClose={onClose}>
+    <Modal onClose={onClose} onSubmit={addCardHandler}>
       <CardDetailContainer>
         {/* Title */}
         <CardDetailBox>
@@ -80,11 +89,15 @@ const CardDetail: React.FC<CardDetailProps> = ({ onClose, card, boardId }) => {
             <CardDetailTitleText>{t("board.title")}</CardDetailTitleText>
           </CardDetailTitle>
           <InputCustom
+            name="name"
             inputValue={cardItem.name}
             text={cardItem.name}
             placeholder={t("board.placeholder.pleaseInputText")}
-            onSave={updateTitle}
+            onSave={onUpdateField}
           />
+          {formValidate.name && (
+            <ErrorValidation>{formValidate.name}</ErrorValidation>
+          )}
         </CardDetailBox>
         {/* Description */}
         <CardDetailBox>
@@ -93,10 +106,11 @@ const CardDetail: React.FC<CardDetailProps> = ({ onClose, card, boardId }) => {
             <CardDetailTitleText>{t("board.description")}</CardDetailTitleText>
           </CardDetailTitle>
           <InputCustom
+            name="description"
             inputValue={cardItem.description}
             text={cardItem.description}
             placeholder={t("board.placeholder.pleaseInputDesc")}
-            onSave={updateDescription}
+            onSave={onUpdateField}
           />
         </CardDetailBox>
         {/* Date */}
@@ -106,9 +120,10 @@ const CardDetail: React.FC<CardDetailProps> = ({ onClose, card, boardId }) => {
             <CardDetailTitleText>{t("board.created")}</CardDetailTitleText>
           </CardDetailTitle>
           <CardDateInput
+            name="createdAt"
             value={cardItem.createdAt}
             type="date"
-            onChange={(e) => updateDate(e.target.value)}
+            onChange={(e) => onUpdateField(e.target.name, e.target.value)}
           />
         </CardDetailBox>
         {/* Status */}

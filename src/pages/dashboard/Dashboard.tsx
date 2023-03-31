@@ -20,11 +20,12 @@ const Dashboard = () => {
     boardList[boardIndex].cards.push({
       id: Helper.uuid(),
       name: card.name,
-      createdAt: card.createdAt,
+      createdAt: card.createdAt.split("-").join("/"),
       description: card.description,
     });
 
     setBoards(boardList);
+    setShowModal(false);
   };
 
   useEffect(() => {

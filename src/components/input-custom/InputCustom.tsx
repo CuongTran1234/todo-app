@@ -10,16 +10,18 @@ import {
 } from "./styles";
 
 interface InputCustomProps {
-  inputValue?: string;
-  placeholder?: string;
-  text?: string;
-  onSave: (value: string) => void;
+  inputValue: string;
+  placeholder: string;
+  text: string;
+  name: string;
+  onSave: (field: string, value: string) => void;
 }
 
 const InputCustom: React.FC<InputCustomProps> = ({
   inputValue,
   placeholder,
   text,
+  name,
   onSave,
 }) => {
   const { t } = useTranslation();
@@ -31,10 +33,14 @@ const InputCustom: React.FC<InputCustomProps> = ({
 
     const inputValue = inputText.trim();
 
-    if (inputValue) {
-      onSave(inputValue);
-      setIsCustomInput(false);
-    }
+    onSave(name, inputValue);
+    setIsCustomInput(false);
+    setInputText(inputValue);
+  };
+
+  const onClose = () => {
+    setIsCustomInput(false);
+    setInputText(inputValue);
   };
 
   return (
@@ -45,6 +51,7 @@ const InputCustom: React.FC<InputCustomProps> = ({
             type="text"
             autoFocus
             value={inputText}
+            name={name}
             placeholder={placeholder}
             onChange={(e) => setInputText(e.target.value)}
             maxLength={255}
@@ -53,11 +60,7 @@ const InputCustom: React.FC<InputCustomProps> = ({
             <Button type="submit" varient="success">
               {t("board.action.add")}
             </Button>
-            <Button
-              type="button"
-              varient="default"
-              onClick={() => setIsCustomInput(false)}
-            >
+            <Button type="button" varient="default" onClick={onClose}>
               {t("board.action.close")}
             </Button>
           </InputFooter>
