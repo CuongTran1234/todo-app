@@ -4,12 +4,20 @@ import Button from "../button/Button";
 import { ModalContainer, ModalContent, ModalFooter } from "./styles";
 
 interface ModalProps {
+  isDelete?: boolean;
   children?: React.ReactNode;
   onClose: () => void;
   onSubmit: () => void;
+  onDelete: () => void;
 }
 
-const Modal: React.FC<ModalProps> = ({ onClose, onSubmit, children }) => {
+const Modal: React.FC<ModalProps> = ({
+  onClose,
+  onSubmit,
+  onDelete,
+  isDelete,
+  children,
+}) => {
   const { t } = useTranslation();
   return (
     <ModalContainer>
@@ -19,9 +27,11 @@ const Modal: React.FC<ModalProps> = ({ onClose, onSubmit, children }) => {
           <Button type="button" varient="success" onClick={onSubmit}>
             {t("board.action.save")}
           </Button>
-          <Button type="button" varient="warning">
-            {t("board.action.delete")}
-          </Button>
+          {isDelete && (
+            <Button type="button" varient="warning" onClick={onDelete}>
+              {t("board.action.delete")}
+            </Button>
+          )}
           <Button type="button" varient="default" onClick={onClose}>
             {t("board.action.close")}
           </Button>

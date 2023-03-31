@@ -13,7 +13,7 @@ const Dashboard = () => {
   const [boardDefault, setBoardDefault] = useState<number>(0);
 
   const addCardHandler = (boardId: number, card: Cards) => {
-    const boardIndex = boards.findIndex((item) => item.id === boardId);
+    const boardIndex = boards.findIndex((item: Boards) => item.id === boardId);
     if (boardIndex < 0) return;
 
     const boardList = [...boards];
@@ -28,6 +28,37 @@ const Dashboard = () => {
     setShowModal(false);
   };
 
+  const updateCard = (boardId: number, card: Cards) => {
+    console.log(boardId);
+    const boardIndex = boards.findIndex((item: Boards) => item.id === boardId);
+    if (boardIndex < 0) return;
+
+    const boardList = [...boards];
+    const cardList = boardList[boardIndex].cards;
+
+    console.log(cardList);
+
+    const cardIndex = cardList.findIndex((item: Cards) => item.id === card.id);
+    if (cardIndex < 0) return;
+
+    boardList[boardIndex].cards[cardIndex] = card;
+    setBoards(boardList);
+  };
+
+  const removeCard = (boardId: number, cardId: string) => {
+    const boardIndex = boards.findIndex((item: Boards) => item.id === boardId);
+    if (boardIndex < 0) return;
+
+    const boardList = [...boards];
+    const cards = boardList[boardIndex].cards;
+
+    const cardIndex = cards.findIndex((item: Cards) => item.id === cardId);
+    if (cardIndex < 0) return;
+
+    cards.splice(cardIndex, 1);
+    setBoards(boardList);
+  };
+
   useEffect(() => {
     setBoards(DataBoard);
     setBoardDefault(DataBoard[0].id);
@@ -39,13 +70,18 @@ const Dashboard = () => {
         <CardDetail
           boardId={boardDefault}
           onClose={() => setShowModal(false)}
-          addCard={addCardHandler}
+          submitCard={addCardHandler}
         />
       )}
       <AppHeader onClick={() => setShowModal(true)}></AppHeader>
       <AppMain>
         {boards.map((item) => (
-          <Board key={item.id} board={item} />
+          <Board
+            updateCard={updateCard}
+            removeCard={removeCard}
+            key={item.id}
+            board={item}
+          />
         ))}
       </AppMain>
     </AppContainer>

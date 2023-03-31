@@ -18,13 +18,18 @@ import {
   CardSelectOption,
   ErrorValidation,
 } from "./styles";
-import { nameValidator } from "./validators";
+import {
+  dateValidator,
+  descriptionValidator,
+  nameValidator,
+} from "./validators";
 
 interface CardDetailProps {
   card?: Cards;
   boardId: number;
   onClose: () => void;
-  addCard: (boardId: number, card: Cards) => void;
+  submitCard: (boardId: number, card: Cards) => void;
+  removeCard?: (boardId: number, cardId: string) => void;
 }
 
 type StatusData = {
@@ -32,9 +37,16 @@ type StatusData = {
   value: number;
 };
 
+enum Field {
+  "name" = "name",
+  "createdAt" = "createdAt",
+  "description" = "description",
+}
+
 const CardDetail: React.FC<CardDetailProps> = ({
   onClose,
-  addCard,
+  submitCard,
+  removeCard,
   card,
   boardId,
 }) => {
@@ -44,7 +56,7 @@ const CardDetail: React.FC<CardDetailProps> = ({
   const [cardItem, setCardItem] = useState<Cards>({
     id: card?.id || "",
     name: card?.name || "",
-    createdAt: card?.createdAt || "",
+    createdAt: card?.createdAt.split("/").join("-") || "",
     description: card?.description || "",
   });
   const [formValidate, setFormValidate] = useState<Omit<Cards, "id">>({
@@ -52,18 +64,23 @@ const CardDetail: React.FC<CardDetailProps> = ({
     createdAt: "",
     description: "",
   });
+  const validateFunc: Record<Field, Function> = {
+    name: nameValidator,
+    description: descriptionValidator,
+    createdAt: dateValidator,
+  };
 
-  const onUpdateField = (field: string, value: string) => {
-    const validateFunc: Record<string, Function> = {
-      name: nameValidator,
-    };
-
-    const validateResult = validateFunc[field](value);
-
+  const onValidateForm = (field: string, value: string) => {
     setFormValidate((prevValidate) => ({
       ...prevValidate,
-      [field]: validateResult,
+      [field]: value,
     }));
+  };
+
+  const onUpdateField = (field: string, value: string) => {
+    const validateResult = validateFunc[field as keyof typeof Field](value);
+
+    onValidateForm(field, validateResult);
 
     setCardItem((prevCard) => ({
       ...prevCard,
@@ -71,8 +88,30 @@ const CardDetail: React.FC<CardDetailProps> = ({
     }));
   };
 
-  const addCardHandler = () => {
-    addCard(boardValue, cardItem);
+  const onSubmitCard = () => {
+    const formKey = Object.keys(formValidate);
+    let isValid = true;
+
+    formKey.forEach((key) => {
+      const validateResult = validateFunc[key as keyof typeof Field](
+        cardItem[key as keyof typeof Field]
+      );
+      if (validateResult) {
+        isValid = false;
+      }
+
+      onValidateForm(key, validateResult);
+    });
+
+    if (!isValid) return;
+
+    submitCard(boardValue, cardItem);
+  };
+
+  const onRemoveCard = () => {
+    if (removeCard) {
+      removeCard(boardId, cardItem.id);
+    }
   };
 
   useEffect(() => {
@@ -80,7 +119,12 @@ const CardDetail: React.FC<CardDetailProps> = ({
   }, []);
 
   return (
-    <Modal onClose={onClose} onSubmit={addCardHandler}>
+    <Modal
+      onDelete={onRemoveCard}
+      onClose={onClose}
+      onSubmit={onSubmitCard}
+      isDelete={!!cardItem.id}
+    >
       <CardDetailContainer>
         {/* Title */}
         <CardDetailBox>
@@ -112,6 +156,9 @@ const CardDetail: React.FC<CardDetailProps> = ({
             placeholder={t("board.placeholder.pleaseInputDesc")}
             onSave={onUpdateField}
           />
+          {formValidate.description && (
+            <ErrorValidation>{formValidate.description}</ErrorValidation>
+          )}
         </CardDetailBox>
         {/* Date */}
         <CardDetailBox>
@@ -125,6 +172,9 @@ const CardDetail: React.FC<CardDetailProps> = ({
             type="date"
             onChange={(e) => onUpdateField(e.target.name, e.target.value)}
           />
+          {formValidate.createdAt && (
+            <ErrorValidation>{formValidate.createdAt}</ErrorValidation>
+          )}
         </CardDetailBox>
         {/* Status */}
         <CardDetailBox>
