@@ -12,6 +12,7 @@ const DataBoard: Boards[] = [
         createdAt: "2023/03/12",
         description:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt",
+        tasks: [],
       },
       {
         id: Helpers.uuid(),
@@ -19,6 +20,7 @@ const DataBoard: Boards[] = [
         createdAt: "2023/03/11",
         description:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt",
+        tasks: [],
       },
       {
         id: Helpers.uuid(),
@@ -26,6 +28,7 @@ const DataBoard: Boards[] = [
         createdAt: "2023/03/15",
         description:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt",
+        tasks: [],
       },
     ],
   },
@@ -39,6 +42,7 @@ const DataBoard: Boards[] = [
         createdAt: "2023/03/14",
         description:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt",
+        tasks: [],
       },
     ],
   },
@@ -52,6 +56,7 @@ const DataBoard: Boards[] = [
         createdAt: "2023/03/10",
         description:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt",
+        tasks: [],
       },
     ],
   },

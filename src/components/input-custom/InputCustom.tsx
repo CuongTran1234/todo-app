@@ -35,12 +35,17 @@ const InputCustom: React.FC<InputCustomProps> = ({
 
     onSave(name, inputValue);
     setIsCustomInput(false);
-    setInputText(inputValue);
+    setInputText("");
   };
 
   const onClose = () => {
     setIsCustomInput(false);
     setInputText(inputValue);
+  };
+
+  const onShowInput = () => {
+    setInputText(inputValue);
+    setIsCustomInput(true);
   };
 
   return (
@@ -66,7 +71,7 @@ const InputCustom: React.FC<InputCustomProps> = ({
           </InputFooter>
         </InputFormContainer>
       ) : (
-        <InputShowForm onClick={() => setIsCustomInput(true)}>
+        <InputShowForm onClick={onShowInput}>
           {text || t("board.placeholder.clickToAddText")}
         </InputShowForm>
       )}

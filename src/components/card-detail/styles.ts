@@ -1,12 +1,5 @@
 import styled, { css } from "styled-components";
-import {
-  Calendar,
-  CheckSquare,
-  List,
-  Trash,
-  Type,
-  Repeat,
-} from "react-feather";
+import { Calendar, CheckSquare, List, Type, Repeat } from "react-feather";
 import Constants from "../../constants";
 
 const baseInputIcon = css`
@@ -57,6 +50,10 @@ export const CardDetailStatusIcon = styled(Repeat)`
   ${baseInputIcon}
 `;
 
+export const CardDetailTaskIcon = styled(CheckSquare)`
+  ${baseInputIcon}
+`;
+
 export const CardDateInput = styled.input`
   max-width: 200px;
   border: 2px solid ${Constants.COLOR.DARK_GREY};
@@ -80,4 +77,18 @@ export const CardSelectOption = styled.option`
 export const ErrorValidation = styled.p`
   color: ${Constants.COLOR.DARD_RED};
   font-size: 14px;
+`;
+
+export const TaskItemList = styled.ul`
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  row-gap: 8px;
+`;
+
+export const TaskItem = styled.li`
+  font-size: 14px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 `;

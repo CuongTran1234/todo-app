@@ -19,7 +19,6 @@ export const InputForm = styled.input`
   padding: 6px;
   font-weight: 500;
   color: ${Constants.COLOR.GREY};
-
   &::placeholder {
     color: ${Constants.COLOR.DARK_GREY};
   }

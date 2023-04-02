@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import DataBoard from "../../defaultData";
 import { Cards } from "../../models/board";
+import Helper from "../../utils";
 import InputCustom from "../input-custom/InputCustom";
 import Modal from "../modal/Modal";
 import {
@@ -17,6 +18,9 @@ import {
   CardSelectForm,
   CardSelectOption,
   ErrorValidation,
+  CardDetailTaskIcon,
+  TaskItemList,
+  TaskItem,
 } from "./styles";
 import {
   dateValidator,
@@ -28,7 +32,8 @@ interface CardDetailProps {
   card?: Cards;
   boardId: number;
   onClose: () => void;
-  submitCard: (boardId: number, card: Cards) => void;
+  submitCard?: (boardId: number, card: Cards) => void;
+  updateCard?: (boardIdFrom: number, boardIdTo: number, card: Cards) => void;
   removeCard?: (boardId: number, cardId: string) => void;
 }
 
@@ -46,6 +51,7 @@ enum Field {
 const CardDetail: React.FC<CardDetailProps> = ({
   onClose,
   submitCard,
+  updateCard,
   removeCard,
   card,
   boardId,
@@ -58,12 +64,15 @@ const CardDetail: React.FC<CardDetailProps> = ({
     name: card?.name || "",
     createdAt: card?.createdAt.split("/").join("-") || "",
     description: card?.description || "",
+    tasks: card?.tasks || [],
   });
-  const [formValidate, setFormValidate] = useState<Omit<Cards, "id">>({
-    name: "",
-    createdAt: "",
-    description: "",
-  });
+  const [formValidate, setFormValidate] = useState<Omit<Cards, "id" | "tasks">>(
+    {
+      name: "",
+      createdAt: "",
+      description: "",
+    }
+  );
   const validateFunc: Record<Field, Function> = {
     name: nameValidator,
     description: descriptionValidator,
@@ -77,10 +86,31 @@ const CardDetail: React.FC<CardDetailProps> = ({
     }));
   };
 
-  const onUpdateField = (field: string, value: string) => {
-    const validateResult = validateFunc[field as keyof typeof Field](value);
+  const onAddTask = (value: string) => {
+    const taskTemp = [...cardItem.tasks];
+    taskTemp.push({
+      id: Helper.uuid(),
+      text: value,
+    });
 
-    onValidateForm(field, validateResult);
+    setCardItem((prevCard) => ({
+      ...prevCard,
+      tasks: taskTemp,
+    }));
+  };
+
+  const onUpdateField = (field: string, value: string) => {
+    const validationFunc = validateFunc[field as keyof typeof Field];
+    if (validationFunc) {
+      const validateResult = validationFunc(value);
+
+      onValidateForm(field, validateResult);
+    }
+
+    if (field === "task") {
+      onAddTask(value);
+      return;
+    }
 
     setCardItem((prevCard) => ({
       ...prevCard,
@@ -105,7 +135,14 @@ const CardDetail: React.FC<CardDetailProps> = ({
 
     if (!isValid) return;
 
-    submitCard(boardValue, cardItem);
+    if (submitCard) {
+      submitCard(boardValue, cardItem);
+      return;
+    }
+
+    if (updateCard) {
+      updateCard(boardId, boardValue, cardItem);
+    }
   };
 
   const onRemoveCard = () => {
@@ -175,6 +212,25 @@ const CardDetail: React.FC<CardDetailProps> = ({
           {formValidate.createdAt && (
             <ErrorValidation>{formValidate.createdAt}</ErrorValidation>
           )}
+        </CardDetailBox>
+        {/* Tasks */}
+        <CardDetailBox>
+          <CardDetailTitle>
+            <CardDetailTaskIcon />
+            <CardDetailTitleText>{t("board.task")}</CardDetailTitleText>
+          </CardDetailTitle>
+          <TaskItemList>
+            {cardItem.tasks.map((item) => (
+              <TaskItem key={item.id}>{item.text}</TaskItem>
+            ))}
+          </TaskItemList>
+          <InputCustom
+            name="task"
+            inputValue=""
+            text=""
+            placeholder={t("board.placeholder.pleaseInputText")}
+            onSave={onUpdateField}
+          />
         </CardDetailBox>
         {/* Status */}
         <CardDetailBox>
